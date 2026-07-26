@@ -1,0 +1,74 @@
+// Generic Data Container Program
+
+// Generic Class
+class DataContainer<T> {
+    private T data;
+
+    // Constructor
+    public DataContainer(T data) {
+        this.data = data;
+    }
+
+    // Setter
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    // Getter
+    public T getData() {
+        return data;
+    }
+
+    // Display Data
+    public void display() {
+        System.out.println("Stored Data: " + data);
+    }
+
+    // Generic Method
+    public static <E> void printArray(E[] array) {
+        System.out.print("Array Elements: ");
+        for (E element : array) {
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
+
+    // Bounded Type Parameter
+    public static <N extends Number> double sumNumbers(N[] numbers) {
+        double sum = 0;
+        for (N num : numbers) {
+            sum += num.doubleValue();
+        }
+        return sum;
+    }
+}
+
+// Main Class
+public class GenericDataContainer {
+    public static void main(String[] args) {
+
+        // Generic Class Example
+        DataContainer<String> name = new DataContainer<>("Pooja");
+        name.display();
+
+        DataContainer<Integer> age = new DataContainer<>(21);
+        age.display();
+
+        DataContainer<Double> salary = new DataContainer<>(55000.75);
+        salary.display();
+
+        // Generic Method Example
+        String[] fruits = {"Apple", "Banana", "Mango"};
+        Integer[] numbers = {10, 20, 30, 40};
+
+        DataContainer.printArray(fruits);
+        DataContainer.printArray(numbers);
+
+        // Bounded Type Parameter Example
+        Integer[] marks = {85, 90, 78, 88};
+        Double[] prices = {12.5, 18.75, 25.0};
+
+        System.out.println("Sum of Marks: " + DataContainer.sumNumbers(marks));
+        System.out.println("Sum of Prices: " + DataContainer.sumNumbers(prices));
+    }
+}
