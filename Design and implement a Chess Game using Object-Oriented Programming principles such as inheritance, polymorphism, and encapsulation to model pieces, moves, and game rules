@@ -1,0 +1,161 @@
+import java.util.*;
+
+// Base Class
+abstract class Piece {
+    private String color;
+    private int row, col;
+
+    public Piece(String color, int row, int col) {
+        this.color = color;
+        this.row = row;
+        this.col = col;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void move(int newRow, int newCol) {
+        row = newRow;
+        col = newCol;
+    }
+
+    public abstract boolean isValidMove(int newRow, int newCol);
+
+    public abstract String getSymbol();
+}
+
+// King Class
+class King extends Piece {
+
+    public King(String color, int row, int col) {
+        super(color, row, col);
+    }
+
+    @Override
+    public boolean isValidMove(int newRow, int newCol) {
+        int dr = Math.abs(newRow - getRow());
+        int dc = Math.abs(newCol - getCol());
+        return dr <= 1 && dc <= 1;
+    }
+
+    @Override
+    public String getSymbol() {
+        return "K";
+    }
+}
+
+// Queen Class
+class Queen extends Piece {
+
+    public Queen(String color, int row, int col) {
+        super(color, row, col);
+    }
+
+    @Override
+    public boolean isValidMove(int newRow, int newCol) {
+        int dr = Math.abs(newRow - getRow());
+        int dc = Math.abs(newCol - getCol());
+
+        return dr == dc || getRow() == newRow || getCol() == newCol;
+    }
+
+    @Override
+    public String getSymbol() {
+        return "Q";
+    }
+}
+
+// Rook Class
+class Rook extends Piece {
+
+    public Rook(String color, int row, int col) {
+        super(color, row, col);
+    }
+
+    @Override
+    public boolean isValidMove(int newRow, int newCol) {
+        return getRow() == newRow || getCol() == newCol;
+    }
+
+    @Override
+    public String getSymbol() {
+        return "R";
+    }
+}
+
+// Chess Board
+class ChessBoard {
+
+    private Piece[][] board = new Piece[8][8];
+
+    public void addPiece(Piece piece) {
+        board[piece.getRow()][piece.getCol()] = piece;
+    }
+
+    public void displayBoard() {
+        System.out.println("\nChess Board:");
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] == null)
+                    System.out.print(". ");
+                else
+                    System.out.print(board[i][j].getSymbol() + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public void movePiece(int fromRow, int fromCol, int toRow, int toCol) {
+
+        Piece piece = board[fromRow][fromCol];
+
+        if (piece == null) {
+            System.out.println("No piece found!");
+            return;
+        }
+
+        if (piece.isValidMove(toRow, toCol)) {
+            board[toRow][toCol] = piece;
+            board[fromRow][fromCol] = null;
+            piece.move(toRow, toCol);
+            System.out.println(piece.getSymbol() + " moved successfully.");
+        } else {
+            System.out.println("Invalid move for " + piece.getSymbol());
+        }
+    }
+}
+
+// Main Class
+public class ChessGame {
+
+    public static void main(String[] args) {
+
+        ChessBoard board = new ChessBoard();
+
+        Piece king = new King("White", 7, 4);
+        Piece queen = new Queen("White", 7, 3);
+        Piece rook = new Rook("Black", 0, 0);
+
+        board.addPiece(king);
+        board.addPiece(queen);
+        board.addPiece(rook);
+
+        board.displayBoard();
+
+        board.movePiece(7, 4, 6, 4); // King move
+        board.movePiece(7, 3, 4, 3); // Queen move
+        board.movePiece(0, 0, 0, 5); // Rook move
+
+        board.displayBoard();
+    }
+}
