@@ -1,0 +1,252 @@
+import java.util.*;
+
+// Enum for Piece Color
+enum Color {
+    WHITE, BLACK
+}
+
+// Position Class
+class Position {
+    private int row;
+    private int col;
+
+    public Position(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+}
+
+// Abstract Piece Class (Inheritance)
+abstract class Piece {
+    private Color color;
+
+    public Piece(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public abstract boolean isValidMove(Position from, Position to);
+
+    public abstract char getSymbol();
+}
+
+// King Class
+class King extends Piece {
+
+    public King(Color color) {
+        super(color);
+    }
+
+    @Override
+    public boolean isValidMove(Position from, Position to) {
+        int dr = Math.abs(from.getRow() - to.getRow());
+        int dc = Math.abs(from.getCol() - to.getCol());
+        return dr <= 1 && dc <= 1;
+    }
+
+    @Override
+    public char getSymbol() {
+        return getColor() == Color.WHITE ? 'K' : 'k';
+    }
+}
+
+// Queen Class
+class Queen extends Piece {
+
+    public Queen(Color color) {
+        super(color);
+    }
+
+    @Override
+    public boolean isValidMove(Position from, Position to) {
+        int dr = Math.abs(from.getRow() - to.getRow());
+        int dc = Math.abs(from.getCol() - to.getCol());
+
+        return dr == dc || from.getRow() == to.getRow() || from.getCol() == to.getCol();
+    }
+
+    @Override
+    public char getSymbol() {
+        return getColor() == Color.WHITE ? 'Q' : 'q';
+    }
+}
+
+// Rook Class
+class Rook extends Piece {
+
+    public Rook(Color color) {
+        super(color);
+    }
+
+    @Override
+    public boolean isValidMove(Position from, Position to) {
+        return from.getRow() == to.getRow() || from.getCol() == to.getCol();
+    }
+
+    @Override
+    public char getSymbol() {
+        return getColor() == Color.WHITE ? 'R' : 'r';
+    }
+}
+
+// Bishop Class
+class Bishop extends Piece {
+
+    public Bishop(Color color) {
+        super(color);
+    }
+
+    @Override
+    public boolean isValidMove(Position from, Position to) {
+        return Math.abs(from.getRow() - to.getRow()) ==
+               Math.abs(from.getCol() - to.getCol());
+    }
+
+    @Override
+    public char getSymbol() {
+        return getColor() == Color.WHITE ? 'B' : 'b';
+    }
+}
+
+// Knight Class
+class Knight extends Piece {
+
+    public Knight(Color color) {
+        super(color);
+    }
+
+    @Override
+    public boolean isValidMove(Position from, Position to) {
+        int dr = Math.abs(from.getRow() - to.getRow());
+        int dc = Math.abs(from.getCol() - to.getCol());
+
+        return (dr == 2 && dc == 1) || (dr == 1 && dc == 2);
+    }
+
+    @Override
+    public char getSymbol() {
+        return getColor() == Color.WHITE ? 'N' : 'n';
+    }
+}
+
+// Pawn Class
+class Pawn extends Piece {
+
+    public Pawn(Color color) {
+        super(color);
+    }
+
+    @Override
+    public boolean isValidMove(Position from, Position to) {
+
+        if (getColor() == Color.WHITE) {
+            return to.getCol() == from.getCol()
+                    && to.getRow() == from.getRow() - 1;
+        } else {
+            return to.getCol() == from.getCol()
+                    && to.getRow() == from.getRow() + 1;
+        }
+    }
+
+    @Override
+    public char getSymbol() {
+        return getColor() == Color.WHITE ? 'P' : 'p';
+    }
+}
+
+// Chess Board
+class ChessBoard {
+
+    private Piece[][] board = new Piece[8][8];
+
+    public ChessBoard() {
+        initializeBoard();
+    }
+
+    private void initializeBoard() {
+
+        board[0][0] = new Rook(Color.BLACK);
+        board[0][1] = new Knight(Color.BLACK);
+        board[0][2] = new Bishop(Color.BLACK);
+        board[0][3] = new Queen(Color.BLACK);
+        board[0][4] = new King(Color.BLACK);
+
+        board[7][0] = new Rook(Color.WHITE);
+        board[7][1] = new Knight(Color.WHITE);
+        board[7][2] = new Bishop(Color.WHITE);
+        board[7][3] = new Queen(Color.WHITE);
+        board[7][4] = new King(Color.WHITE);
+
+        for (int i = 0; i < 8; i++) {
+            board[1][i] = new Pawn(Color.BLACK);
+            board[6][i] = new Pawn(Color.WHITE);
+        }
+    }
+
+    public void displayBoard() {
+
+        System.out.println("Chess Board:");
+
+        for (int i = 0; i < 8; i++) {
+
+            for (int j = 0; j < 8; j++) {
+
+                if (board[i][j] == null)
+                    System.out.print(". ");
+                else
+                    System.out.print(board[i][j].getSymbol() + " ");
+            }
+
+            System.out.println();
+        }
+    }
+
+    public void movePiece(Position from, Position to) {
+
+        Piece piece = board[from.getRow()][from.getCol()];
+
+        if (piece == null) {
+            System.out.println("No piece found!");
+            return;
+        }
+
+        if (piece.isValidMove(from, to)) {
+
+            board[to.getRow()][to.getCol()] = piece;
+            board[from.getRow()][from.getCol()] = null;
+
+            System.out.println("Move Successful!");
+        } else {
+            System.out.println("Invalid Move!");
+        }
+    }
+}
+
+// Main Class
+public class ChessGame {
+
+    public static void main(String[] args) {
+
+        ChessBoard board = new ChessBoard();
+
+        board.displayBoard();
+
+        System.out.println("\nMoving White Pawn...");
+
+        board.movePiece(new Position(6, 0),
+                        new Position(5, 0));
+
+        board.displayBoard();
+    }
+}
